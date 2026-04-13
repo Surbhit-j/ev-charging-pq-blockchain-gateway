@@ -32,17 +32,34 @@ A simulated end-to-end EV charging payment system integrating:
 
 ## Setup & Run
 
-### 1. Install dependencies
+### 1️. Activate Virtual Environment
+
+```bash
+evcrypto_env\Scripts\activate   # Windows
+```
+
+---
+
+### 2️. Install Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Start the Grid Authority server (in one terminal)
+---
+
+### 3. Start Backend Server
+
 ```bash
-uvicorn backend.main:app --reload --port 8000
+uvicorn backend.main:app --reload
 ```
 
-### 3. Run the simulation (in another terminal)
+---
+
+### 4️. Run Simulation
+
+Open a new terminal and run:
+
 ```bash
 python main_flow.py
 ```
