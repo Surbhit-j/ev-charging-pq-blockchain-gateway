@@ -1,171 +1,9 @@
-# Secure Centralized EV Charging Payment Gateway using Post-Quantum and Lightweight Cryptography
+# Secure Centralized EV Charging Payment Gateway
+## BITS F463 Cryptography — Term Project 2025-26
 
 ---
 
-## Project Overview
-
-This project implements a **secure, centralized EV charging payment system** that simulates real-world smart grid transactions. It integrates **Blockchain**, **Lightweight Cryptography (LWC)**, and **Post-Quantum Cryptography concepts** to ensure secure, verifiable, and tamper-resistant energy transactions.
-
-The system models three key entities:
-
-* **EV Owner (User Device)**
-* **Charging Kiosk**
-* **Grid Authority (Central Server)**
-
-Each entity is implemented as a separate module and interacts through a structured transaction flow.
-
----
-
-## Key Features
-
-* **SHA-3 (Keccak-256) based UID & FID generation**
-* **Lightweight Cryptography (ASCON – simulated)** for QR encryption
-* **QR Code-based payment initiation**
-* **Blockchain ledger** for immutable transaction storage
-* **Secure transaction validation** (VMID, PIN, balance)
-* **Quantum attack simulation (Shor’s Algorithm)** to demonstrate RSA vulnerability
-* **Refund handling and edge case support**
-
----
-
-## System Architecture
-
-```
-User Device → Charging Kiosk → Grid Authority → Blockchain
-```
-
-### Entity Responsibilities
-
-* **User Device (`user/user_app.py`)**
-
-  * Inputs VMID, PIN, amount
-  * Initiates transaction
-
-* **Charging Kiosk (`kiosk/kiosk.py`)**
-
-  * Generates encrypted QR (VFID)
-  * Decrypts scanned data
-
-* **Grid Authority (`backend/main.py`)**
-
-  * Registers users & franchises
-  * Validates transactions
-  * Updates balances
-  * Maintains blockchain ledger
-
-* **Blockchain (`blockchain/`)**
-
-  * Stores immutable transaction records
-
----
-
-## Cryptographic Components
-
-### 1. SHA-3 Hashing
-
-Used for:
-
-* User ID (UID)
-* Franchise ID (FID)
-* Transaction ID
-
-### 2. Lightweight Cryptography (ASCON)
-
-* Used to encrypt Franchise ID into QR codes
-* **Note:** ASCON is simulated using XOR-based encryption for simplicity
-
-### 3. Quantum Cryptography (Simulation)
-
-* Demonstrates vulnerability of RSA using **Shor’s Algorithm (simulated)**
-
----
-
-## Blockchain Structure
-
-Each block contains:
-
-* Transaction ID (SHA-3 hash)
-* VMID, FID, Amount
-* Timestamp
-* Status (success/refund)
-* Previous Block Hash
-* Current Hash
-
-Ensures:
-
-* Immutability
-* Transparency
-* Tamper-resistance
-
----
-
-## How to Run the Project
-
-### 1️. Activate Virtual Environment
-
-```bash
-evcrypto_env\Scripts\activate   # Windows
-```
-
----
-
-### 2️. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-### 3. Start Backend Server
-
-```bash
-uvicorn backend.main:app --reload
-```
-
----
-
-### 4️. Run Simulation
-
-Open a new terminal and run:
-
-```bash
-python main_flow.py
-```
-
----
-
-## Sample Flow
-
-1. User & Franchise are registered
-2. Kiosk generates encrypted QR
-3. User enters VMID, PIN, amount
-4. Kiosk decodes QR → sends to Grid
-5. Grid validates and processes transaction
-6. Blockchain records transaction
-7. Quantum vulnerability demonstration shown
-
----
-
-## Assumptions & Simplifications
-
-* ASCON is **simulated** using XOR-based encryption due to implementation complexity
-* PIN is transmitted in plain form for simplicity (can be hashed in real systems)
-* Blockchain is **centralized and in-memory**
-* Quantum attack is demonstrated via simulation, not full implementation
-
----
-
-## Learning Outcomes
-
-* Understanding of **modern cryptographic systems**
-* Integration of **blockchain with real-world applications**
-* Exposure to **post-quantum cryptography concepts**
-* Designing **secure distributed system simulations**
-
----
-
-## Team Details
+## Team Members
 
 - **Name:** Saniya Shahi | **ID:** 2022A8PS0810H  
 - **Name:** Kumar Shivansh Sinha | **ID:** 2022B1AA1227H  
@@ -175,7 +13,104 @@ python main_flow.py
 
 ---
 
-## Conclusion
+## Project Overview
 
-This project successfully demonstrates a **secure EV charging payment ecosystem** integrating cryptographic primitives, blockchain technology, and quantum-aware security considerations, aligned with modern smart-grid requirements.
+A simulated end-to-end EV charging payment system integrating:
+- **ASCON-128** (Lightweight Cryptography) — encrypts Franchise ID in QR codes
+- **RSA + Shor's Algorithm** (Quantum Cryptography) — encrypts user credentials and demonstrates quantum vulnerability
+- **SHA3-256 Blockchain** — immutable ledger of all charging transactions
 
+### Entities
+| Entity | Role |
+|---|---|
+| Grid Authority | Central server — registers users/franchises, processes payments, maintains blockchain |
+| Franchise | Charging station operator — receives QR code, unlocks hardware on success |
+| EV Owner | Initiates session by scanning QR, provides VMID + PIN + amount |
+| Charging Kiosk | Encrypts FID → QR, relays transaction to Grid |
+
+---
+
+## Setup & Run
+
+### 1. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Start the Grid Authority server (in one terminal)
+```bash
+uvicorn backend.main:app --reload --port 8000
+```
+
+### 3. Run the simulation (in another terminal)
+```bash
+python main_flow.py
+```
+
+---
+
+## Project Structure
+```
+ev-charging-gateway/
+├── backend/
+│   └── main.py           # FastAPI Grid Authority server
+├── blockchain/
+│   ├── block.py          # Block with SHA3-256 hash (json-canonical)
+│   └── blockchain.py     # Chain with integrity verification
+├── crypto/
+│   ├── ascon.py          # ASCON-128 lightweight encryption (IoT/kiosk)
+│   ├── rsa_sim.py        # RSA-2048 for credential transmission
+│   ├── qiskit_shor.py    # Shor's Algorithm simulation (quantum attack demo)
+│   └── sha3_hash.py      # SHA3-256 / Keccak-256 ID generation
+├── kiosk/
+│   └── kiosk.py          # VFID generation, ASCON encrypt/decrypt, QR
+├── user/
+│   └── user_app.py       # RSA-encrypted credential submission
+├── utils/
+│   ├── helpers.py        # VMID generation (UID + full mobile)
+│   └── qr.py             # QR code image generation
+├── main_flow.py          # Full simulation runner
+└── requirements.txt
+```
+
+---
+
+## Key Design Decisions & Assumptions
+
+### Cryptography
+- **ASCON-128** with a random 16-byte nonce per message (nonce prepended to ciphertext for recovery). Key stored as a constant for demo; production should use a KDF or HSM.
+- **SHA3-256** used for UID/FID generation. True Keccak-256 (Ethereum-style) is available via `generate_id_keccak()` in `sha3_hash.py` if `pycryptodome` is installed.
+- **RSA-2048** encrypts the VMID+PIN bundle before network transmission. The Shor's demo factors a smaller modulus (N=3233) to show the same attack scales.
+
+### VMID
+- VMID = UID (16 hex chars) + full mobile number. Using the full number (not just last 4 digits) ensures global uniqueness.
+
+### PIN vs Password
+- Registration password is used only to derive the UID. A separate PIN is stored for authorizing every charge transaction.
+
+### Blockchain
+- Block hash uses `json.dumps(sort_keys=True)` for deterministic serialization across Python versions.
+- Transaction ID = SHA3-256(UID + FID + timestamp + amount) per spec §6.
+- Every block includes a `dispute_flag` (bool). Refund/reverse blocks set it to `True`.
+
+### Edge Cases Handled
+- **Insufficient balance**: transaction rejected before any balance change.
+- **Invalid FID**: rejected at Grid before processing.
+- **Invalid PIN**: rejected at Grid.
+- **Hardware failure after payment**: `hardware_failure` flag in `process_transaction()`. When `True`, balances are reversed and a refund block with `dispute_flag=True` is appended.
+- **Account closure mid-session**: assumed not possible in current implementation (no account deletion endpoint). Documented as out of scope for demo.
+
+### Grid Zones
+- 3 providers: TataPower, Adani, ChargePoint
+- 3 zones each: e.g. TP-NORTH, TP-SOUTH, TP-WEST
+- Both users and franchises must register with a valid zone_code.
+
+---
+
+## Quantum Attack Summary
+
+Shor's algorithm finds the period `r` of `f(x) = a^x mod N`, allowing factorization of RSA moduli in polynomial time on a quantum computer. The demo:
+1. Sets up a small RSA key (N=3233, e=17)
+2. Runs Shor's period-finding (classical simulation, or Qiskit circuit for N=15)
+3. Recovers `p`, `q`, and reconstructs private key `d`
+4. Concludes that RSA-encrypted EV credential transmissions are quantum-breakable
